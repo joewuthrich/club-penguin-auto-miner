@@ -1,3 +1,5 @@
+//TODO: THIS MAY BE IMPOSSIBLE - NOT SURE IF YOU CAN ACTUALLY SEND CLICKS
+
 class Controller {
   constructor() {
     this.pos1 = [0, 0];
