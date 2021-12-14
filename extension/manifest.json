@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "CPR Miner",
+  "version": "1.0",
+  "description": "Automatically mines for coins in CPR",
+
+  "icons": {
+    "48": "icon.jpg"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://play.cprewritten.net/*"],
+      "js": ["main.js"]
+    }
+  ]
+}
