@@ -29,8 +29,7 @@ class Main:
 
   def startLoop(self):
     self._loop = True
-    listener = keyboard.Listener(
-    on_release=self.stopLoop)
+    listener = keyboard.Listener(on_release = self.stopLoop)
     listener.start()
 
     maxX = max(self._pos1[0], self._pos2[0])  
@@ -38,6 +37,7 @@ class Main:
     maxY = max(self._pos1[1], self._pos2[1])
     minY = min(self._pos1[1], self._pos2[1])
     currentPos = self._pos2
+    
     while self._loop:
         boundsX = int(currentPos[0] - 45), int(currentPos[0] + 45)
         boundsY = int(currentPos[1] - 35), int(currentPos[1] + 65)
