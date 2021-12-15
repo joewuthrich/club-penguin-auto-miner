@@ -1,5 +1,3 @@
-//TODO: THIS MAY BE IMPOSSIBLE - NOT SURE IF YOU CAN ACTUALLY SEND CLICKS
-
 class Controller {
   constructor() {
     this.pos1 = [0, 0];
@@ -65,6 +63,21 @@ class Controller {
   startLoop() {
     this.loop = true;
 
+    //  BAD PRACTICE NOT TO WAIT FOR ERROR
+    browser.runtime.sendMessage({
+      action: "updateIcon",
+      path: "./icon.png",
+    });
+
+    const keydownEventListener = (event) => {
+      if (event.key == "Escape") {
+        this.stopLoop();
+        document.removeEventListener("keydown", keydownEventListener);
+      }
+    };
+
+    document.addEventListener("keydown", keydownEventListener);
+
     console.log("Starting automatic loop in two seconds.");
     setTimeout(() => {
       this.loopFunction();
@@ -79,6 +92,17 @@ class Controller {
   async loopFunction() {
     if (!this.loop) {
       console.log("Automatic loop stopped.");
+      // browser.browserAction.setIcon({ 32: "./icon-disabled.png" });
+      // browser.runtime.sendMessage({
+      //   action: "updateIcon",
+      //   path: "./icon-disabled.png",
+      // });
+
+      //  BAD PRACTICE NOT TO WAIT FOR ERROR
+      browser.runtime.sendMessage({
+        action: "updateIcon",
+        path: "./icon-disabled.png",
+      });
       return;
     }
 
@@ -244,7 +268,9 @@ class Controller {
 }
 
 const remote = new Controller();
-document.addEventListener("keydown", (event) => {
-  if (event.key == "Escape") remote.stopLoop();
+
+browser.runtime.onMessage.addListener((request) => {
+  if (request == "STARTMINING") {
+    remote.setCoordinates();
+  }
 });
-remote.setCoordinates();

@@ -5,7 +5,7 @@
   "description": "Automatically mines for coins in CPR",
 
   "icons": {
-    "48": "icon.jpg"
+    "48": "icon.png"
   },
 
   "content_scripts": [
@@ -13,5 +13,18 @@
       "matches": ["https://play.cprewritten.net/*"],
       "js": ["main.js"]
     }
-  ]
+  ],
+
+  "browser_action": {
+    "browser_style": true,
+    "default_icon": {
+      "48": "icon-disabled.png"
+    },
+    "default_title": "CPR Miner",
+    "default_popup": "popup.html"
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  }
 }
