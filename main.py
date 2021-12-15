@@ -37,12 +37,12 @@ class Main:
     maxY = max(self._pos1[1], self._pos2[1])
     minY = min(self._pos1[1], self._pos2[1])
     currentPos = self._pos2
-    
+
     while self._loop:
-        boundsX = int(currentPos[0] - 45), int(currentPos[0] + 45)
-        boundsY = int(currentPos[1] - 35), int(currentPos[1] + 65)
+        boundsX = int(currentPos[0] - 40), int(currentPos[0] + 40)
+        boundsY = int(currentPos[1] - 20), int(currentPos[1] + 60)
         innerX = int(currentPos[0] - 30), int(currentPos[0] + 30)
-        innerY = int(currentPos[1] - 20), int(currentPos[1] + 50)
+        innerY = int(currentPos[1] - 10), int(currentPos[1] + 50)
         newPos = random.randint(*boundsX), random.randint(*boundsY)
 
         while newPos[0] < minX or newPos[0] > maxX or newPos[0] == currentPos[0] or \
@@ -54,8 +54,15 @@ class Main:
         print("Moving to " + str(currentPos))
         mouseController.position = currentPos
         mouseController.click(Button.left)
-        time.sleep(random.uniform(0.6, 1.2))
-        keyboardController.tap("d")
+
+        time.sleep(random.uniform(0.5, 0.8))
+        chance = random.random()
+        if chance < 0.01:
+          keyboardController.tap("s")
+        if chance < 0.02:
+          keyboardController.tap("w")
+        else:
+          keyboardController.tap("d")
         time.sleep(random.uniform(5, 5.5))
 
   def stopLoop(self, key):
@@ -66,3 +73,10 @@ class Main:
 
 main = Main()
 main.setCoordinates()
+
+# STARTING COINS: 3866 (12:47am)
+# FINISHING COINS: 50432 (11:21am) - WAS KICKED AT UNKNOWN TIME
+
+# STARTING COINS: 74753 (1:30pm)
+# FINISHING COINS: 
+
