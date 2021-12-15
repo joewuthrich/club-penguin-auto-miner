@@ -38,9 +38,11 @@ class Main:
     minY = min(self._pos1[1], self._pos2[1])
     currentPos = self._pos2
 
+    print("Starting automatic loop in two seconds.")
+    time.sleep(2)
     while self._loop:
-        boundsX = int(currentPos[0] - 40), int(currentPos[0] + 40)
-        boundsY = int(currentPos[1] - 11), int(currentPos[1] + 60)
+        boundsX = int(currentPos[0] - 35), int(currentPos[0] + 35)
+        boundsY = int(currentPos[1] - 6), int(currentPos[1] + 55)
         innerX = int(currentPos[0] - 30), int(currentPos[0] + 30)
         innerY = int(currentPos[1] - 1), int(currentPos[1] + 50)
         newPos = random.randint(*boundsX), random.randint(*boundsY)
@@ -51,19 +53,24 @@ class Main:
           newPos = random.randint(*boundsX), random.randint(*boundsY)
         
         currentPos = newPos
-        print("Moving to " + str(currentPos))
+        # print("Moving to " + str(currentPos))
         mouseController.position = currentPos
         mouseController.click(Button.left)
 
-        time.sleep(random.uniform(0.5, 0.8))
+        time.sleep(random.uniform(0.35, 0.45))
         chance = random.random()
-        if chance < 0.01:
+        if chance < 0.005:
           keyboardController.tap("s")
-        if chance < 0.02:
+        elif chance < 0.01:
           keyboardController.tap("w")
         else:
           keyboardController.tap("d")
-        time.sleep(random.uniform(5, 5.5))
+          if chance > 0.995:
+            time.sleep(random.uniform(0.4, 0.7))
+            keyboardController.tap("h")
+            time.sleep(random.uniform(0.2, 0.4))
+        time.sleep(random.uniform(3.3, 3.8))
+    print("Automatic loop stopped.")
 
   def stopLoop(self, key):
     if key == keyboard.Key.esc:
@@ -78,5 +85,5 @@ main.setCoordinates()
 # FINISHING COINS: 50432 (11:21am) - WAS KICKED AT UNKNOWN TIME
 
 # STARTING COINS: 74753 (1:30pm)
-# FINISHING COINS: 
+# FINISHING COINS: 196963 (6:11pm)
 
