@@ -10,7 +10,7 @@ class Controller {
   setCoordinates() {
     const posTwoListener = (e) => {
       this.setPos2(e);
-      this.click(687, 583);
+      this.click(1838, 1000);
       this.removeCoordinateListener(posTwoListener);
     };
 
@@ -20,13 +20,13 @@ class Controller {
   }
 
   setPos1(e) {
-    this.pos1 = [e.offsetX, e.offsetY];
-    console.log([e.offsetX, e.offsetY]);
+    this.pos1 = [e.clientX, e.clientY];
+    console.log([e.clientX, e.clientY]);
   }
 
   setPos2(e) {
-    this.pos2 = [e.offsetX, e.offsetY];
-    console.log([e.offsetX, e.offsetY]);
+    this.pos2 = [e.clientX, e.clientY];
+    console.log([e.clientX, e.clientY]);
   }
 
   removeCoordinateListener(listener) {
@@ -36,17 +36,18 @@ class Controller {
 
   click(x, y) {
     console.log("clicking at " + x + "," + y);
-    var ev = new MouseEvent("click", {
+    var ev = new MouseEvent("mouseup", {
       view: window,
+      button: 0,
       bubbles: true,
       cancelable: true,
       clientX: x,
-      clientX: y,
+      clientY: y,
     });
 
-    var el = document.elementFromPoint(x, y);
-    console.log(el);
-    console.log(el.dispatchEvent(ev));
+    console.log(ev.clientX);
+
+    document.getElementById("cpr_client").dispatchEvent(ev);
   }
 }
 
