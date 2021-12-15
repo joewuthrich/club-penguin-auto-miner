@@ -40,9 +40,9 @@ class Main:
 
     while self._loop:
         boundsX = int(currentPos[0] - 40), int(currentPos[0] + 40)
-        boundsY = int(currentPos[1] - 20), int(currentPos[1] + 60)
+        boundsY = int(currentPos[1] - 11), int(currentPos[1] + 60)
         innerX = int(currentPos[0] - 30), int(currentPos[0] + 30)
-        innerY = int(currentPos[1] - 10), int(currentPos[1] + 50)
+        innerY = int(currentPos[1] - 1), int(currentPos[1] + 50)
         newPos = random.randint(*boundsX), random.randint(*boundsY)
 
         while newPos[0] < minX or newPos[0] > maxX or newPos[0] == currentPos[0] or \
