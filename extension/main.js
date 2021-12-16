@@ -152,17 +152,18 @@ class Controller {
     this.click(...this.currentPos);
     await this.sleep(0.35, 0.45);
     var random = Math.random();
-    if (random < 0.004) this.pressKey(83, 115);
-    // s
-    else if (random < 0.008) this.pressKey(87, 119);
-    // w
-    else {
-      this.pressKey(68, 100); // d
-      if (random > 0.995) {
-        await this.sleep(0.4, 0.7);
-        this.pressKey(72, 104); // h
-        await this.sleep(0.2, 0.4);
-      }
+    if (random < 0.004) {
+      this.pressKey(83, 115); // s
+      await this.sleep(0.2, 0.4);
+    } else if (random < 0.008) {
+      this.pressKey(87, 119); // w
+      await this.sleep(0.2, 0.4);
+    }
+    this.pressKey(68, 100); // d
+    if (random > 0.995) {
+      await this.sleep(0.4, 0.7);
+      this.pressKey(72, 104); // h
+      await this.sleep(0.2, 0.4);
     }
 
     await this.sleep(3.3, 3.8);
