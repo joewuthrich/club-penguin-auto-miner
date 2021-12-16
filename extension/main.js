@@ -253,6 +253,9 @@ class Controller {
 }
 
 const remote = new Controller();
+browser.runtime.sendMessage({
+  action: "stopMining",
+});
 
 browser.runtime.onMessage.addListener((request) => {
   if (request.action == "setArea") {
