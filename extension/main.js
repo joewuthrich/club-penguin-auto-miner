@@ -6,7 +6,7 @@ class Controller {
     this.loop = false;
   }
 
-  setCoordinates() {
+  setNewCoordinates() {
     const posOneListener = (e) => {
       this.pos1 = [e.clientX, e.clientY];
     };
@@ -30,7 +30,6 @@ class Controller {
       });
     };
 
-    console.log("Click and drag to select an area to mine in.");
     document.addEventListener("mousedown", posOneListener);
     document.addEventListener("mouseup", posTwoListener);
   }
@@ -38,6 +37,15 @@ class Controller {
   removeCoordinateListener(listener1, listener2) {
     document.removeEventListener("mousedown", listener1);
     document.removeEventListener("mouseup", listener2);
+  }
+
+  setCoordinates(pos1, pos2) {
+    this.pos1 = pos1;
+    this.pos2 = pos2;
+    this.currentPos = [
+      (pos2[0] - pos1[0]) / 2 + pos1[0],
+      (pos2[1] - pos1[1]) / 2 + pos1[1],
+    ];
   }
 
   click(x, y) {
@@ -51,7 +59,7 @@ class Controller {
       clientX: x,
       clientY: y,
     });
-    -document.getElementById("cpr_client").dispatchEvent(event);
+    document.getElementById("cpr_client").dispatchEvent(event);
 
     event = new MouseEvent("mouseup", {
       view: window,
@@ -76,30 +84,20 @@ class Controller {
     document.getElementById("cpr_client").dispatchEvent(event);
   }
 
-  startLoop(pos1, pos2) {
+  startLoop() {
     if (this.loop) return;
     this.loop = true;
 
-    this.pos1 = pos1;
-    this.pos2 = pos2;
-
-    //  BAD PRACTICE NOT TO WAIT FOR ERROR
-    browser.runtime.sendMessage({
-      action: "updateIcon",
-      path: "./icon.png",
-    });
-
-    const keydownEventListener = (event) => {
-      if (event.key == "Escape") {
-        this.stopLoop();
-        document.removeEventListener("keydown", keydownEventListener);
-      }
-    };
-
-    document.addEventListener("keydown", keydownEventListener);
-
-    console.log("Starting automatic loop");
-    this.loopFunction();
+    this.click(...this.currentPos);
+    console.log(this.currentPos);
+    setTimeout(() => {
+      //  BAD PRACTICE NOT TO WAIT FOR ERROR
+      browser.runtime.sendMessage({
+        action: "updateIcon",
+        path: "./icon.png",
+      });
+      this.loopFunction();
+    }, 1200);
   }
 
   sleep(min, max) {
@@ -108,24 +106,17 @@ class Controller {
   }
 
   async loopFunction() {
-    if (!this.loop) {
-      console.log("Automatic loop stopped.");
-      //  BAD PRACTICE NOT TO WAIT FOR ERROR
-      browser.runtime.sendMessage({
-        action: "updateIcon",
-        path: "./icon-disabled.png",
-      });
-      return;
-    }
+    if (!this.loop) return;
 
     var innerX = [this.currentPos[0] - 27, this.currentPos[0] + 27];
-    var innerY = [this.currentPos[1] - 1, this.currentPos[1] + 45];
+    var innerY = [this.currentPos[1] - 1, this.currentPos[1] + 50];
 
     var newPos = [
       this.getRandomRangeInterval(...innerX),
       this.getRandomRangeInterval(...innerY),
     ];
 
+    var counter = 0;
     while (
       newPos[0] < this.pos1[0] ||
       newPos[0] > this.pos2[0] ||
@@ -134,95 +125,17 @@ class Controller {
       newPos[1] > this.pos2[1] ||
       newPos[1] == this.currentPos[1]
     ) {
+      if (counter > 400) break;
+
       var newPos = [
         this.getRandomRangeInterval(...innerX),
         this.getRandomRangeInterval(...innerY),
       ];
+      counter++;
     }
-
-    // var random = Math.random();
-    // var places = [];
-    // if (
-    //   this.isInsideRange(
-    //     [this.currentPos[0] - 35, this.currentPos[1] + 50],
-    //     [this.currentPos[0] + 30, this.currentPos[1] + 55]
-    //   )
-    // ) {
-    //   // top + left
-    //   places.push[0];
-    // }
-
-    // if (
-    //   this.isInsideRange(
-    //     [this.currentPos[0] + 30, this.currentPos[1] - 1],
-    //     [this.currentPos[0] + 35, this.currentPos[1] + 55]
-    //   )
-    // ) {
-    //   // right + top
-    //   places.push[1];
-    // }
-
-    // if (
-    //   this.isInsideRange(
-    //     [this.currentPos[0] - 30, this.currentPos[1] - 1],
-    //     [this.currentPos[0] + 35, this.currentPos[1] - 6]
-    //   )
-    // ) {
-    //   // bottom + right
-    //   places.push[2];
-    // }
-
-    // if (
-    //   this.isInsideRange(
-    //     [this.currentPos[0] - 35, this.currentPos[1] - 30],
-    //     [this.currentPos[0] - 6, this.currentPos[1] + 50]
-    //   )
-    // ) {
-    //   // left + bottom
-    //   places.push[3];
-    // }
-
-    // if (places.length == 0) {
-    //   console.log("IMPOSSIBLE POSITION!");
-    //   return;
-    // }
-
-    // var location = places[math.round(getRandomRange(0, places.length - 1))];
-
-    // if (location == 0) {
-    //   // top + left
-    //   this.currentPos = [
-    //     this.getRandomRange(this.currentPos[0] - 35, this.currentPos[0] + 30),
-    //     this.getRandomRange(this.currentPos[1] + 50, this.currentPos[1] + 55),
-    //   ];
-    // } else if (location == 1) {
-    //   // right + top
-    //   this.currentPos = [
-    //     this.getRandomRange(this.currentPos[0] + 30, this.currentPos[0] + 35),
-    //     this.getRandomRange(this.currentPos[1] - 1, this.currentPos[1] + 55),
-    //   ];
-    // } else if (location == 2) {
-    //   // bottom + right
-    //   this.currentPos = [
-    //     this.getRandomRange(this.currentPos[0] - 30, this.currentPos[0] + 35),
-    //     this.getRandomRange(this.currentPos[1] - 1, this.currentPos[1] - 6),
-    //   ];
-    // } else if (location == 3) {
-    //   // left + bottom
-    //   this.currentPos = [
-    //     this.getRandomRange(this.currentPos[0] - 35, this.currentPos[0] - 30),
-    //     this.getRandomRange(this.currentPos[1] - 6, this.currentPos[1] + 50),
-    //   ];
-    // } else {
-    //   console.log("IMPOSSIBLE POSITION!");
-    //   return;
-    // }
 
     this.currentPos = newPos;
 
-    console.log(
-      "Moving to " + this.currentPos[0] + ", " + this.currentPos[1] + "."
-    );
     this.click(...this.currentPos);
     await this.sleep(0.35, 0.45);
     var random = Math.random();
@@ -272,8 +185,12 @@ class Controller {
 
   stopLoop() {
     if (!this.loop) return;
-    console.log("Stopping automatic loop.");
 
+    //  BAD PRACTICE NOT TO WAIT FOR ERROR
+    browser.runtime.sendMessage({
+      action: "updateIcon",
+      path: "./icon-disabled.png",
+    });
     this.loop = false;
   }
 
@@ -311,14 +228,19 @@ const remote = new Controller();
 
 browser.runtime.onMessage.addListener((request) => {
   if (request.action == "setArea") {
-    remote.setCoordinates();
+    remote.setNewCoordinates();
   }
 
   if (request.action == "startMining") {
-    remote.startLoop(request.pos1, request.pos2);
+    remote.setCoordinates(request.pos1, request.pos2);
+    remote.startLoop();
   }
 
   if (request.action == "stopMining") {
     remote.stopLoop();
   }
+});
+
+document.addEventListener("mouseup", (event) => {
+  console.log(event.clientX + " " + event.clientY);
 });

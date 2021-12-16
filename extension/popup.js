@@ -52,7 +52,9 @@ document.getElementById("start").addEventListener("mouseup", function () {
           mining: true,
         });
         this.classList.add("disabled");
-        document.getElementById("stop").classList.remove("disabled");
+        setTimeout(() => {
+          document.getElementById("stop").classList.remove("disabled");
+        }, 2000);
         browser.tabs
           .sendMessage(tab.id, {
             action: "startMining",
@@ -78,7 +80,9 @@ document.getElementById("stop").addEventListener("mouseup", function () {
         mining: false,
       });
       this.classList.add("disabled");
-      document.getElementById("start").classList.remove("disabled");
+      setTimeout(() => {
+        document.getElementById("start").classList.remove("disabled");
+      }, 3000);
       for (let tab of tabs) {
         browser.tabs
           .sendMessage(tab.id, { action: "stopMining" })
