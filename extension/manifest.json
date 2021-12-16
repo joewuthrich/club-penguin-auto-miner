@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "CPR Miner",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Automatically mines for coins in CPR",
 
   "icons": {
