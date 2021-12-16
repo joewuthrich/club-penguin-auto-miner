@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "CPR Miner",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Automatically mines for coins in CPR",
 
   "icons": {
@@ -18,7 +18,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "cprminer@projects.joewuthrich.com",
-      "strict_min_version": "42.0"
+      "strict_min_version": "55.0"
     }
   },
 
