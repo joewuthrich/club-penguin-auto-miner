@@ -4,77 +4,128 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      *:focus,
+      *:active {
+        outline: none !important;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html,
       body {
         display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        flex-direction: column;
-        box-sizing: border-box;
-        padding: 10px;
+        height: 100%;
+        width: 100%;
+        flex-direction: row;
+        background: linear-gradient(315deg, #ffffff, #d7e1ec);
       }
 
-      p {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 15px;
-        margin: 0px;
-        margin-top: 10px;
-        padding: 0px;
-      }
-
-      .button-30 {
-        align-items: center;
-        appearance: none;
-        background-color: #fcfcfd;
-        border-radius: 4px;
-        border-width: 0;
-        box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,
-          rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
-        box-sizing: border-box;
-        color: #36395a;
-        cursor: pointer;
-        display: inline-flex;
-        font-family: "JetBrains Mono", monospace;
-        height: 48px;
-        justify-content: center;
-        line-height: 1;
-        list-style: none;
-        overflow: hidden;
-        padding-left: 16px;
-        padding-right: 16px;
+      .icon {
         position: relative;
-        text-align: left;
-        text-decoration: none;
-        transition: box-shadow 0.15s, transform 0.15s;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
-        white-space: nowrap;
-        will-change: box-shadow, transform;
+        background-color: #ffffff;
+        border-radius: 50%;
+        padding: 15px;
+        margin: 10px;
+        width: 40px;
+        height: 40px;
         font-size: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       }
 
-      .button-30:focus {
-        box-shadow: #d6d6e7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px,
-          rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+      #area {
+        border: 1px solid #58595a;
+        fill: #58595a;
       }
 
-      .button-30:hover {
-        box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px,
-          rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
-        transform: translateY(-2px);
+      #start {
+        border: 1px solid #08d14b;
+        fill: #08d14b;
       }
 
-      .button-30:active {
-        box-shadow: #d6d6e7 0 3px 7px inset;
-        transform: translateY(2px);
+      #stop {
+        border: 1px solid #e13033;
+        fill: #e13033;
+      }
+
+      #area:hover {
+        background-color: #58595a;
+        fill: #ffffff;
+      }
+
+      #start:hover {
+        background-color: #08d14b;
+        fill: #ffffff;
+      }
+
+      #stop:hover {
+        background-color: #e13033;
+        fill: #ffffff;
+      }
+
+      svg {
+        transform: scale(1.5);
+        fill: inherit !important;
+      }
+
+      svg:hover {
+        fill: white !important;
+      }
+
+      .disabled {
+        background-color: rgb(209, 209, 209) !important;
+        fill: white !important;
+        border: 1px solid rgb(209, 209, 209) !important;
+      }
+
+      .disabled:hover {
+        cursor: initial;
       }
     </style>
   </head>
   <body>
-    <button id="cprminer-button-start" class="button-30" role="button">
-      Start Mining
-    </button>
-    <p>Press ESC to stop mining.</p>
+    <div class="icon" id="area">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M12 0l-11 6v12.131l11 5.869 11-5.869v-12.066l-11-6.065zm-1 21.2l-6.664-3.555 4.201-2.801c1.08-.719-.066-2.359-1.243-1.575l-4.294 2.862v-7.901l8 4.363v8.607zm-6.867-14.63l6.867-3.746v4.426c0 1.323 2 1.324 2 0v-4.415l6.91 3.811-7.905 4.218-7.872-4.294zm8.867 6.03l8-4.269v7.8l-4.263-2.842c-1.181-.785-2.323.855-1.245 1.574l4.172 2.781-6.664 3.556v-8.6z"
+        />
+      </svg>
+    </div>
+    <div class="icon disabled" id="start">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        class="start-icon"
+      >
+        <path d="M3 22v-20l18 10-18 10z" />
+      </svg>
+    </div>
+    <div class="icon disabled" id="stop">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+      >
+        <path d="M2 2h20v20h-20z" />
+      </svg>
+    </div>
     <script src="popup.js"></script>
   </body>
 </html>

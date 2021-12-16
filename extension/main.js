@@ -23,7 +23,12 @@ class Controller {
       this.pos1 = [minX, minY];
       this.pos2 = [maxX, maxY];
 
-      this.startLoop();
+      console.log("here");
+      browser.runtime.sendMessage({
+        action: "updateStorage",
+        pos1: this.pos1,
+        pos2: this.pos2,
+      });
     };
 
     console.log("Click and drag to select an area to mine in.");
@@ -37,6 +42,8 @@ class Controller {
   }
 
   click(x, y) {
+    //  MOUSEDOWN AND CLICK ARE JUST BECAUSE THEY MIGHT CHECK FOR IT
+    //  IN THE FUTURE, CURRENTLY THEY ONLY CHECK MOUSEUP
     var event = new MouseEvent("mousedown", {
       view: window,
       button: 0,
@@ -45,8 +52,7 @@ class Controller {
       clientX: x,
       clientY: y,
     });
-
-    document.getElementById("cpr_client").dispatchEvent(event);
+    -document.getElementById("cpr_client").dispatchEvent(event);
 
     event = new MouseEvent("mouseup", {
       view: window,
@@ -58,10 +64,25 @@ class Controller {
     });
 
     document.getElementById("cpr_client").dispatchEvent(event);
+
+    var event = new MouseEvent("click", {
+      view: window,
+      button: 0,
+      bubbles: true,
+      cancelable: true,
+      clientX: x,
+      clientY: y,
+    });
+
+    document.getElementById("cpr_client").dispatchEvent(event);
   }
 
-  startLoop() {
+  startLoop(pos1, pos2) {
+    if (this.loop) return;
     this.loop = true;
+
+    this.pos1 = pos1;
+    this.pos2 = pos2;
 
     //  BAD PRACTICE NOT TO WAIT FOR ERROR
     browser.runtime.sendMessage({
@@ -92,12 +113,6 @@ class Controller {
   async loopFunction() {
     if (!this.loop) {
       console.log("Automatic loop stopped.");
-      // browser.browserAction.setIcon({ 32: "./icon-disabled.png" });
-      // browser.runtime.sendMessage({
-      //   action: "updateIcon",
-      //   path: "./icon-disabled.png",
-      // });
-
       //  BAD PRACTICE NOT TO WAIT FOR ERROR
       browser.runtime.sendMessage({
         action: "updateIcon",
@@ -216,16 +231,16 @@ class Controller {
     this.click(...this.currentPos);
     await this.sleep(0.35, 0.45);
     var random = Math.random();
-    if (random < 0.005) this.pressKey(83);
+    if (random < 0.005) this.pressKey(83, 115);
     // s
-    else if (random < 0.01) this.pressKey(87);
+    else if (random < 0.01) this.pressKey(87, 119);
     // w
     else {
       if (random > 0.995) {
         await this.sleep(0.4, 0.7);
-        this.pressKey(72); // h
+        this.pressKey(72, 104); // h
         await this.sleep(0.2, 0.4);
-      } else this.pressKey(68); // d
+      } else this.pressKey(68, 100); // d
     }
 
     await this.sleep(3.3, 3.8);
@@ -251,14 +266,34 @@ class Controller {
   }
 
   stopLoop() {
+    if (!this.loop) return;
     console.log("Stopping automatic loop.");
+
     this.loop = false;
   }
 
-  pressKey(keyCode) {
+  pressKey(keyCode, charCode) {
+    //  KEYPRESS AND KEYUP ARE JUST BECAUSE THEY MIGHT CHECK FOR IT
+    //  IN THE FUTURE, CURRENTLY THEY ONLY CHECK KEYDOWN
+
     var event = new KeyboardEvent("keydown", {
       keyCode: keyCode,
-      location: 0,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    document.getElementsByTagName("body")[0].dispatchEvent(event);
+
+    var event = new KeyboardEvent("keypress", {
+      charCode: charCode,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    document.getElementsByTagName("body")[0].dispatchEvent(event);
+
+    var event = new KeyboardEvent("keyup", {
+      keyCode: keyCode,
       bubbles: true,
       cancelable: true,
     });
@@ -270,7 +305,16 @@ class Controller {
 const remote = new Controller();
 
 browser.runtime.onMessage.addListener((request) => {
-  if (request == "STARTMINING") {
+  if (request.action == "setArea") {
     remote.setCoordinates();
+  }
+
+  if (request.action == "startMining") {
+    console.log(request.pos1, request.pos2);
+    remote.startLoop(request.pos1, request.pos2);
+  }
+
+  if (request.action == "stopMining") {
+    remote.stopLoop();
   }
 });
