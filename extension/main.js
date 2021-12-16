@@ -23,7 +23,6 @@ class Controller {
       this.pos1 = [minX, minY];
       this.pos2 = [maxX, maxY];
 
-      console.log("here");
       browser.runtime.sendMessage({
         action: "updateStorage",
         pos1: this.pos1,
@@ -99,10 +98,8 @@ class Controller {
 
     document.addEventListener("keydown", keydownEventListener);
 
-    console.log("Starting automatic loop in two seconds.");
-    setTimeout(() => {
-      this.loopFunction();
-    }, 2000);
+    console.log("Starting automatic loop");
+    this.loopFunction();
   }
 
   sleep(min, max) {
@@ -121,13 +118,13 @@ class Controller {
       return;
     }
 
-    var newPos = [
-      this.getRandomRange(this.currentPos[0] - 35, this.currentPos[0] + 35),
-      this.getRandomRange(this.currentPos[1] - 6, this.currentPos[1] + 55),
-    ];
+    var innerX = [this.currentPos[0] - 27, this.currentPos[0] + 27];
+    var innerY = [this.currentPos[1] - 1, this.currentPos[1] + 45];
 
-    var innerX = [this.currentPos[0] - 30, this.currentPos[0] + 30];
-    var innerY = [this.currentPos[1] - 1, this.currentPos[1] + 50];
+    var newPos = [
+      this.getRandomRangeInterval(...innerX),
+      this.getRandomRangeInterval(...innerY),
+    ];
 
     while (
       newPos[0] < this.pos1[0] ||
@@ -135,13 +132,11 @@ class Controller {
       newPos[0] == this.currentPos[0] ||
       newPos[1] < this.pos1[1] ||
       newPos[1] > this.pos2[1] ||
-      newPos[1] == this.currentPos[1] ||
-      (innerX[0] < newPos[0] && newPos[0] < innerX[1]) ||
-      (innerY[0] < newPos[1] && newPos[1] < innerY[1])
+      newPos[1] == this.currentPos[1]
     ) {
-      newPos = [
-        this.getRandomRange(this.currentPos[0] - 35, this.currentPos[0] + 35),
-        this.getRandomRange(this.currentPos[1] - 6, this.currentPos[1] + 55),
+      var newPos = [
+        this.getRandomRangeInterval(...innerX),
+        this.getRandomRangeInterval(...innerY),
       ];
     }
 
@@ -265,6 +260,16 @@ class Controller {
     return Math.random() * (max - min) + min;
   }
 
+  getRandomRangeInterval(innerMin, innerMax) {
+    const range = 10;
+    var point = this.getRandomRange(0, range);
+
+    if (point < range / 2) point = innerMin - point;
+    else point = innerMax + point;
+
+    return point;
+  }
+
   stopLoop() {
     if (!this.loop) return;
     console.log("Stopping automatic loop.");
@@ -310,7 +315,6 @@ browser.runtime.onMessage.addListener((request) => {
   }
 
   if (request.action == "startMining") {
-    console.log(request.pos1, request.pos2);
     remote.startLoop(request.pos1, request.pos2);
   }
 
