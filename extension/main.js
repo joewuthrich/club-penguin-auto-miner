@@ -144,11 +144,12 @@ class Controller {
     else if (random < 0.01) this.pressKey(87, 119);
     // w
     else {
+      this.pressKey(68, 100); // d
       if (random > 0.995) {
         await this.sleep(0.4, 0.7);
         this.pressKey(72, 104); // h
         await this.sleep(0.2, 0.4);
-      } else this.pressKey(68, 100); // d
+      }
     }
 
     await this.sleep(3.3, 3.8);
