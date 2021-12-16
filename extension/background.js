@@ -3,7 +3,6 @@ browser.runtime.onMessage.addListener((data) => {
     browser.browserAction.setIcon({ path: data.path });
   }
   if (data.action == "updateStorage") {
-    console.log(document.getElementById("area"));
     browser.storage.sync.set({
       pos1: data.pos1,
       pos2: data.pos2,
