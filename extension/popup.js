@@ -76,11 +76,11 @@ document.getElementById("stop").addEventListener("mouseup", function () {
       active: true,
     })
     .then((tabs) => {
-      browser.storage.sync.set({
-        mining: false,
-      });
       this.classList.add("disabled");
       setTimeout(() => {
+        browser.storage.sync.set({
+          mining: false,
+        });
         document.getElementById("start").classList.remove("disabled");
       }, 3000);
       for (let tab of tabs) {

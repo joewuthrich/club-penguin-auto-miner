@@ -4,14 +4,19 @@ class Controller {
     this.pos2 = [0, 0];
     this.currentPos = [0, 0];
     this.loop = false;
+    this.selecting = false;
   }
 
   setNewCoordinates() {
     const posOneListener = (e) => {
+      document.querySelector("body").append(this.getHighlightObject());
+
       this.pos1 = [e.clientX, e.clientY];
+      this.selecting = true;
     };
 
     const posTwoListener = (e) => {
+      this.selecting = false;
       this.pos2 = [e.clientX, e.clientY];
       this.removeCoordinateListener(posOneListener, posTwoListener);
       var maxX = Math.max(this.pos1[0], this.pos2[0]);
@@ -22,6 +27,8 @@ class Controller {
       this.currentPos = this.pos2;
       this.pos1 = [minX, minY];
       this.pos2 = [maxX, maxY];
+
+      document.getElementById("drag-highlight").remove();
 
       browser.runtime.sendMessage({
         action: "updateStorage",
@@ -89,12 +96,13 @@ class Controller {
     this.loop = true;
 
     this.click(...this.currentPos);
-    console.log(this.currentPos);
+    const div = this.getHighlightObject();
+    document.querySelector("body").append(div);
+    this.setHighlightObject(div);
+
     setTimeout(() => {
-      //  BAD PRACTICE NOT TO WAIT FOR ERROR
       browser.runtime.sendMessage({
-        action: "updateIcon",
-        path: "./icon.png",
+        action: "startMining",
       });
       this.loopFunction();
     }, 1200);
@@ -106,14 +114,19 @@ class Controller {
   }
 
   async loopFunction() {
-    if (!this.loop) return;
+    if (!this.loop) {
+      browser.runtime.sendMessage({
+        action: "stopMining",
+      });
+      return;
+    }
 
-    var innerX = [this.currentPos[0] - 27, this.currentPos[0] + 27];
-    var innerY = [this.currentPos[1] - 1, this.currentPos[1] + 50];
+    var innerX = [this.currentPos[0] - 31, this.currentPos[0] + 31];
+    var innerY = [this.currentPos[1] - 1, this.currentPos[1] + 51];
 
     var newPos = [
-      this.getRandomRangeInterval(...innerX),
-      this.getRandomRangeInterval(...innerY),
+      this.getRandomRangeInterval(...innerX, 4),
+      this.getRandomRangeInterval(...innerY, 4),
     ];
 
     var counter = 0;
@@ -128,8 +141,8 @@ class Controller {
       if (counter > 400) break;
 
       var newPos = [
-        this.getRandomRangeInterval(...innerX),
-        this.getRandomRangeInterval(...innerY),
+        this.getRandomRangeInterval(...innerX, 7),
+        this.getRandomRangeInterval(...innerY, 7),
       ];
       counter++;
     }
@@ -139,9 +152,9 @@ class Controller {
     this.click(...this.currentPos);
     await this.sleep(0.35, 0.45);
     var random = Math.random();
-    if (random < 0.005) this.pressKey(83, 115);
+    if (random < 0.004) this.pressKey(83, 115);
     // s
-    else if (random < 0.01) this.pressKey(87, 119);
+    else if (random < 0.008) this.pressKey(87, 119);
     // w
     else {
       this.pressKey(68, 100); // d
@@ -174,8 +187,7 @@ class Controller {
     return Math.random() * (max - min) + min;
   }
 
-  getRandomRangeInterval(innerMin, innerMax) {
-    const range = 10;
+  getRandomRangeInterval(innerMin, innerMax, range) {
     var point = this.getRandomRange(0, range);
 
     if (point < range / 2) point = innerMin - point;
@@ -186,13 +198,9 @@ class Controller {
 
   stopLoop() {
     if (!this.loop) return;
-
-    //  BAD PRACTICE NOT TO WAIT FOR ERROR
-    browser.runtime.sendMessage({
-      action: "updateIcon",
-      path: "./icon-disabled.png",
-    });
     this.loop = false;
+    if (document.getElementById("drag-highlight"))
+      document.getElementById("drag-highlight").remove();
   }
 
   pressKey(keyCode, charCode) {
@@ -223,6 +231,25 @@ class Controller {
 
     document.getElementsByTagName("body")[0].dispatchEvent(event);
   }
+
+  getHighlightObject() {
+    var div = document.createElement("div");
+    div.id = "drag-highlight";
+    div.style.position = "absolute";
+    div.style.backgroundColor = "transparent";
+    div.style.opacity = "0.4";
+    div.style.zIndex = 3;
+    div.style.pointerEvents = "none";
+    div.style.border = "5px dashed red";
+    return div;
+  }
+
+  setHighlightObject(div) {
+    div.style.left = this.pos1[0];
+    div.style.top = this.pos1[1];
+    div.style.width = this.pos2[0] - this.pos1[0];
+    div.style.height = this.pos2[1] - this.pos1[1];
+  }
 }
 
 const remote = new Controller();
@@ -242,6 +269,14 @@ browser.runtime.onMessage.addListener((request) => {
   }
 });
 
-document.addEventListener("mouseup", (event) => {
-  console.log(event.clientX + " " + event.clientY);
+document.addEventListener("mousemove", (event) => {
+  if (remote.selecting) {
+    var div = document.getElementById("drag-highlight");
+    div.style.left = Math.min(remote.pos1[0], event.clientX);
+    div.style.top = Math.min(remote.pos1[1], event.clientY);
+    div.style.width = Math.abs(event.clientX - remote.pos1[0]);
+    div.style.height = Math.abs(event.clientY - remote.pos1[1]);
+  }
 });
+
+function setHighlightObject() {}
