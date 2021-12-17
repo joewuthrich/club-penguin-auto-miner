@@ -121,8 +121,8 @@ class Controller {
       return;
     }
 
-    var innerX = [this.currentPos[0] - 31, this.currentPos[0] + 31];
-    var innerY = [this.currentPos[1] - 1, this.currentPos[1] + 51];
+    var innerX = [this.currentPos[0] - 24, this.currentPos[0] + 24];
+    var innerY = [this.currentPos[1] - 1, this.currentPos[1] + 41];
 
     var newPos = [
       this.getRandomRangeInterval(...innerX, 4),
@@ -150,14 +150,14 @@ class Controller {
     this.currentPos = newPos;
 
     this.click(...this.currentPos);
-    await this.sleep(0.35, 0.45);
+    await this.sleep(0.25, 0.32);
     var random = Math.random();
     if (random < 0.004) {
       this.pressKey(83, 115); // s
-      await this.sleep(0.2, 0.4);
+      await this.sleep(0.2, 0.3);
     } else if (random < 0.008) {
       this.pressKey(87, 119); // w
-      await this.sleep(0.2, 0.4);
+      await this.sleep(0.2, 0.3);
     }
     this.pressKey(68, 100); // d
     if (random > 0.995) {
@@ -166,7 +166,7 @@ class Controller {
       await this.sleep(0.2, 0.4);
     }
 
-    await this.sleep(3.3, 3.8);
+    await this.sleep(3.4, 3.8);
 
     this.loopFunction();
   }
