@@ -8,4 +8,4 @@ There's a python version and a js version (the js version is more advanced, but 
 
 https://cprewritten.net/
 
-https://addons.mozilla.org/firefox/downloads/file/3882807/cpr_miner-1.2-fx.xpi
+https://addons.mozilla.org/firefox/downloads/file/3882821/cpr_miner-1.3-fx.xpi
