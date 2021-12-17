@@ -4,7 +4,7 @@ Don't actually use this (it's against the rules), but I thought it would be an i
 
 This solve that issue by moving around randomly inside a rectangle, and increases efficiency by minimising walking distance between coins.
 
-There's a python version and a js version (the js version is more advanced, but only works as a Firefox addon)
+There's a python version and a js version (the js version is more advanced and works when tabbed off or doing other things, but only comes as a Firefox addon)
 
 https://cprewritten.net/
 
