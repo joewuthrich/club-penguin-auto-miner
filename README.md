@@ -6,6 +6,4 @@ This solve that issue by moving around randomly inside a rectangle, and increase
 
 There's a python version and a js version (the js version is more advanced and works when tabbed off or doing other things, but only comes as a Firefox addon)
 
-https://cprewritten.net/
-
 https://addons.mozilla.org/firefox/downloads/file/3882821/cpr_miner-1.3-fx.xpi
