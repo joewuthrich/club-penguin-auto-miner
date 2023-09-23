@@ -1,3 +1,6 @@
+const MIN_DELAY = 8;
+const MAX_DELAY = 10;
+
 class Controller {
   constructor() {
     this.pos1 = [0, 0];
@@ -5,6 +8,18 @@ class Controller {
     this.currentPos = [0, 0];
     this.loop = false;
     this.selecting = false;
+
+    document.addEventListener("mousemove", (event) => {
+      if (this.selecting) {
+        var div = document.getElementById("drag-highlight");
+        if (div != null) {
+          div.style.left = Math.min(remote.pos1[0], event.clientX) + "px";
+          div.style.top = Math.min(remote.pos1[1], event.clientY) + "px";
+          div.style.width = Math.abs(event.clientX - remote.pos1[0]) + "px";
+          div.style.height = Math.abs(event.clientY - remote.pos1[1]) + "px";
+        }
+      }
+    });
   }
 
   setNewCoordinates() {
@@ -66,7 +81,7 @@ class Controller {
       clientX: x,
       clientY: y,
     });
-    document.getElementById("cpr_client").dispatchEvent(event);
+    document.getElementsByTagName("canvas")[0].dispatchEvent(event);
 
     event = new MouseEvent("mouseup", {
       view: window,
@@ -77,7 +92,7 @@ class Controller {
       clientY: y,
     });
 
-    document.getElementById("cpr_client").dispatchEvent(event);
+    document.getElementsByTagName("canvas")[0].dispatchEvent(event);
 
     var event = new MouseEvent("click", {
       view: window,
@@ -88,7 +103,7 @@ class Controller {
       clientY: y,
     });
 
-    document.getElementById("cpr_client").dispatchEvent(event);
+    document.getElementsByTagName("canvas")[0].dispatchEvent(event);
   }
 
   startLoop() {
@@ -150,23 +165,23 @@ class Controller {
     this.currentPos = newPos;
 
     this.click(...this.currentPos);
-    await this.sleep(0.25, 0.32);
+    await this.sleep(0.28, 0.35);
     var random = Math.random();
     if (random < 0.004) {
-      this.pressKey(83, 115); // s
+      this.pressKey(83, 115, "KeyS", "s"); // s
       await this.sleep(0.2, 0.3);
     } else if (random < 0.008) {
-      this.pressKey(87, 119); // w
+      this.pressKey(87, 119, "KeyW", "w"); // w
       await this.sleep(0.2, 0.3);
     }
-    this.pressKey(68, 100); // d
+    this.pressKey(68, 100, "KeyD", "d"); // d
     if (random > 0.995) {
       await this.sleep(0.4, 0.7);
-      this.pressKey(72, 104); // h
+      this.pressKey(72, 104, "KeyH", "h"); // h
       await this.sleep(0.2, 0.4);
     }
 
-    await this.sleep(3.4, 3.8);
+    await this.sleep(MIN_DELAY, MAX_DELAY);
 
     this.loopFunction();
   }
@@ -189,7 +204,7 @@ class Controller {
   }
 
   getRandomRangeInterval(innerMin, innerMax, range) {
-    var point = this.getRandomRange(0, range);
+    var point = this.getRandomRange(1, range);
 
     if (point < range / 2) point = innerMin - point;
     else point = innerMax + point;
@@ -204,12 +219,15 @@ class Controller {
       document.getElementById("drag-highlight").remove();
   }
 
-  pressKey(keyCode, charCode) {
+  pressKey(keyCode, charCode, code, key) {
     //  KEYPRESS AND KEYUP ARE JUST BECAUSE THEY MIGHT CHECK FOR IT
     //  IN THE FUTURE, CURRENTLY THEY ONLY CHECK KEYDOWN
 
     var event = new KeyboardEvent("keydown", {
       keyCode: keyCode,
+      code: code,
+      which: keyCode,
+      key: key,
       bubbles: true,
       cancelable: true,
     });
@@ -272,15 +290,3 @@ browser.runtime.onMessage.addListener((request) => {
     remote.stopLoop();
   }
 });
-
-document.addEventListener("mousemove", (event) => {
-  if (remote.selecting) {
-    var div = document.getElementById("drag-highlight");
-    div.style.left = Math.min(remote.pos1[0], event.clientX);
-    div.style.top = Math.min(remote.pos1[1], event.clientY);
-    div.style.width = Math.abs(event.clientX - remote.pos1[0]);
-    div.style.height = Math.abs(event.clientY - remote.pos1[1]);
-  }
-});
-
-function setHighlightObject() {}
