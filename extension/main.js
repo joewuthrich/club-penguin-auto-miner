@@ -1,5 +1,5 @@
-const MIN_DELAY = 8;
-const MAX_DELAY = 10;
+const MIN_DELAY = 15;
+const MAX_DELAY = 20;
 
 class Controller {
   constructor() {
@@ -136,8 +136,8 @@ class Controller {
       return;
     }
 
-    var innerX = [this.currentPos[0] - 24, this.currentPos[0] + 24];
-    var innerY = [this.currentPos[1] - 1, this.currentPos[1] + 41];
+    var innerX = [this.currentPos[0] - 30, this.currentPos[0] + 30];
+    var innerY = [this.currentPos[1] - 10, this.currentPos[1] + 50];
 
     var newPos = [
       this.getRandomRangeInterval(...innerX, 4),
@@ -165,7 +165,7 @@ class Controller {
     this.currentPos = newPos;
 
     this.click(...this.currentPos);
-    await this.sleep(0.28, 0.35);
+    await this.sleep(0.6, 0.8);
     var random = Math.random();
     if (random < 0.004) {
       this.pressKey(83, 115, "KeyS", "s"); // s
